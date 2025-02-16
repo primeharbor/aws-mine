@@ -108,21 +108,41 @@ const notificationTopic = new sns.Topic(
   "AwsMineNotificationTopic"
 );
 
-const trippedMineFunction = new NodejsFunction(
+// const trippedMineFunction = new NodejsFunction(
+//   customResourceStack,
+//   "AwsMineTrippedFunction",
+//   {
+//     runtime: lambda.Runtime.NODEJS_18_X,
+//     entry: url.fileURLToPath(
+//       new URL("./functions/tripped-mine/handler.ts", import.meta.url)
+//     ),
+//     environment: {
+//       MINE_TABLE_NAME: mineTableName,
+//       NOTIFICATION_TOPIC_ARN: notificationTopic.topicArn,
+//     },
+//     logRetention: logs.RetentionDays.ONE_MONTH,
+//   }
+// );
+
+const trippedMineFunction = new lambda.Function(
   customResourceStack,
   "AwsMineTrippedFunction",
   {
-    runtime: lambda.Runtime.NODEJS_18_X,
-    entry: url.fileURLToPath(
-      new URL("./functions/tripped-mine/handler.ts", import.meta.url)
+    runtime: lambda.Runtime.PYTHON_3_12,
+    handler: "handler.lambda_handler",
+    code: lambda.Code.fromAsset(
+      path.join(__dirname, "./functions/tripped-mine")
     ),
     environment: {
       MINE_TABLE_NAME: mineTableName,
       NOTIFICATION_TOPIC_ARN: notificationTopic.topicArn,
     },
     logRetention: logs.RetentionDays.ONE_MONTH,
+    memorySize: 1024,
+    timeout: Duration.seconds(90),
   }
 );
+
 
 notificationTopic.grantPublish(trippedMineFunction);
 
