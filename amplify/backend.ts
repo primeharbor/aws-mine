@@ -11,6 +11,9 @@ import * as destinations from "aws-cdk-lib/aws-logs-destinations";
 import * as sns from "aws-cdk-lib/aws-sns";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import * as path from "path";
+import { Duration } from "aws-cdk-lib";
+
 
 const backend = defineBackend({
   auth,
